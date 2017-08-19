@@ -1,0 +1,5 @@
+/* MAIN.CSS */
+
+#wx-banner, #wx-location, #wx-current, #wx-details {
+    border: 1px solid black;
+}
