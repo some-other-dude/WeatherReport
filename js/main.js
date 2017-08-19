@@ -23,10 +23,8 @@ function geo_success(position) {
       } else {
           city = "Sometown"
       }
-      $("#wx-city").text(`${city}, ${rev["address"]["state"]}`);
+      document.querySelector("#wx-location").innerHTML = `<h4>for</h4><h1>${city}, ${rev["address"]["state"]}</h1>`;
     });
-
-    console.log("success: ");
 }
 
 function geo_error(error) {
