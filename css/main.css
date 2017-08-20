@@ -3,3 +3,21 @@
 #wx-banner, #wx-location, #wx-current, #wx-details {
     border: 1px solid black;
 }
+
+body {
+    height: 100%;
+    background-color: RGBA(91, 140, 252, 1.00);
+    color: RGBA(240, 240, 240, 1);
+    padding-top: 30px;
+}
+
+#current-conditions {
+    text-align: center;
+}
+#wx-current-temp {
+    font-size: 100px;
+}
+
+#wx-icon {
+    height: 100%;
+}
