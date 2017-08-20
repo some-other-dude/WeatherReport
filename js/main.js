@@ -64,7 +64,7 @@
             skycons.add("icon1", Skycons.PARTLY_CLOUDY_NIGHT)
         } else if (wx.weather[0].main == "Clouds") {
             skycons.add("icon1", Skycons.CLOUDY)
-        } else if (wx.weather[0].main == "Rain") {
+        } else if (wx.weather[0].main == "Rain" || wx.weather[0].main == "Thunderstorm") {
             skycons.add("icon1", Skycons.RAIN)
         } else if (wx.weather[0].main == "Sleet") {
             skycons.add("icon1", Skycons.SLEET)
@@ -77,6 +77,7 @@
         // display only one temp scale
         $("#temp-f").hide()
         //animate
+        console.log("animate");
         skycons.play();
     }
 
@@ -89,7 +90,6 @@
             update_weather(data)
         })
     }
-
 
     function geo_success(position) {
         var apiKey = "949cb7fbc0d8a2"
