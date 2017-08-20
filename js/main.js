@@ -6,48 +6,70 @@
 {
     function update_city(rev) {
         let city = ""
-        if (_.has(rev,"address.city")) {
+        if (_.has(rev, "address.city")) {
             city = rev["address"]["city"]
-        } else if (_.has(rev,"address.hamlet")) {
+        } else if (_.has(rev, "address.hamlet")) {
             city = rev["address"]["hamlet"]
-        } else if (_.has(rev,"address.village")) {
+        } else if (_.has(rev, "address.village")) {
             city = rev["address"]["village"]
-        } else if (_.has(rev,"address.town")) {
+        } else if (_.has(rev, "address.town")) {
             city = rev["address"]["town"]
         } else {
             city = "Sometown"
         }
-        document.querySelector("#wx-location").innerHTML = `<h4>for</h4><h1>${city}, ${rev.address.state}</h1>`
+        document.querySelector("#wx-location").innerHTML = `<h1>${city}, ${rev.address.state}</h1>`
     }
 
     function update_weather(wx) {
-
-
+        let skycons = new Skycons({
+            "color": "white"
+        })
         let tempC = wx.main.temp - 273.15
-        let tempF = tempC * 9/5 + 32
-        document.querySelector("#wx-current-conditions").innerHTML = `<img src="${wx.weather[0]["icon"]}" class="wx-icon"><span id="wx-current-temp">${Math.round(wx.main.temp)}c</span>
-        </br><span class="wx-short-description">${wx.weather[0].main}</span>`
+        let tempF = tempC * 9 / 5 + 32
+        let nowDate = new Date
+        let dayOrNight = ""
+        let longDesc = wx.weather[0].description.split(" ").map(function(w) {
+            return w.substring(0,1).toUpperCase() + w.slice(1)
+        }).join(" ")
+        console.log(longDesc);
 
+        nowDate > wx.sys.sunrise && nowDate < wx.sys.sunset ? dayOrNight = "DAY" : dayOrNight = "NIGHT"
 
+        document.querySelector("#wx-current-conditions").innerHTML = `<span id="wx-current-temp">${Math.round(wx.main.temp)}c</span></br><span class="wx-short-description">${longDesc}</span>`
 
+        if (wx.weather[0].main == "Clear" && dayOrNight == "DAY") {
+            skycons.add("icon1", Skycons.CLEAR_DAY)
+        } else if (wx.weather[0].main == "Clear" && dayOrNight == "NIGHT") {
+            skycons.add("icon1", Skycons.CLEAR_NIGHT)
+        } else if (wx.weather[0].main == "Partly Cloudy" && dayOrNight == "DAY") {
+            skycons.add("icon1", Skycons.PARTLY_CLOUDY_DAY)
+        } else if (wx.weather[0].main == "Partly Cloudy" && dayOrNight == "NIGHT") {
+            skycons.add("icon1", Skycons.PARTLY_CLOUDY_NIGHT)
+        } else if (wx.weather[0].main == "Clouds") {
+            skycons.add("icon1", Skycons.CLOUDY)
+        } else if (wx.weather[0].main == "Rain") {
+            skycons.add("icon1", Skycons.RAIN)
+        } else if (wx.weather[0].main == "Sleet") {
+            skycons.add("icon1", Skycons.SLEET)
+        } else if (wx.weather[0].main == "Snow") {
+            skycons.add("icon1", Skycons.SNOW)
+        } else if (wx.weather[0].main == "Wind") {
+            skycons.add("icon1", Skycons.WIND)
+        }
+        skycons.play();
     }
+
     function get_weather(pos) {
         let wxUrl = `https://fcc-weather-api.glitch.me/api/current?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`
 
         $.ajax({
-            url: wxUrl})
-            .done(function (data) {
+                url: wxUrl
+            })
+            .done(function(data) {
                 update_weather(data)
             })
     }
 
-    function wx_success(wxData) {
-        console.log(wxData)
-    }
-
-    function wx_error(err) {
-        console.log(err)
-    }
 
     function geo_success(position) {
         var apiKey = "949cb7fbc0d8a2"
@@ -56,10 +78,10 @@
         console.log(`Geo Success: Lat: ${position.coords.latitude} Lon: ${position.coords.longitude}`);
 
         $.ajax({
-          url: `http://locationiq.org/v1/reverse.php?format=json&key=${apiKey}&lat=${lat}&lon=${long}`,
-      }).done(function(data) {
-          update_city(data)
-          get_weather(position)
+            url: `http://locationiq.org/v1/reverse.php?format=json&key=${apiKey}&lat=${lat}&lon=${long}`,
+        }).done(function(data) {
+            update_city(data)
+            get_weather(position)
         })
     }
 
