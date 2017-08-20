@@ -12,10 +12,6 @@ body {
     padding-top: 30px;
 }
 
-#temp-c {
-    display:none;
-}
-
 #temp-f {
     display: inline;
 }

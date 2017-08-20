@@ -5,6 +5,7 @@
 
 {
     function update_city(rev) {
+        // tease the city out of the JSON
         let city = ""
         if (_.has(rev, "address.city")) {
             city = rev["address"]["city"]
@@ -20,6 +21,14 @@
         document.querySelector("#wx-location").innerHTML = `<h1>${city}, ${rev.address.state}</h1>`
     }
 
+    //helper for current conditions
+    function toggleTempScales() {
+        console.log("toggiing");
+        $("#temp-c").toggle()
+        $("#temp-f").toggle()
+    }
+
+    // do all the display logic and update HTML
     function update_weather(wx) {
         let skycons = new Skycons({
             "color": "white"
@@ -28,24 +37,23 @@
         let tempF = Math.round(tempC * 9 / 5 + 32)
         let dayOrNight = ""
         let longDesc = wx.weather[0].description.split(" ").map(function(w) {
-            return w.substring(0,1).toUpperCase() + w.slice(1)
+            return w.substring(0, 1).toUpperCase() + w.slice(1)
         }).join(" ")
         let sunrise = wx.sys.sunrise
         let sunset = wx.sys.sunset
 
-        // finish doing the day/night calcs.
-        // put in f/c switch
-
+        // day/night calcs for icons
         wx.dt > sunrise && wx.dt < sunset ? dayOrNight = "DAY" : dayOrNight = "NIGHT"
 
-        console.log(dayOrNight);
-
+        // insert the text for current conditions
         document.querySelector("#wx-current-conditions").innerHTML = `<span id="wx-current-temp">
-                <span id="temp-c">${tempC}c</span>
-                <span id="temp-f">${tempF}f</span>
+                <span id="temp-c">${tempC} <a href="javascript:void(0)" onclick="toggleTempScales()">c</a></span>
+                <span id="temp-f">${tempF} <a href="javascript:void(0)" onclick="toggleTempScales()">f</a></span>
             </span></br>
             <span class="wx-short-description">${longDesc}</span>`
 
+
+        // determine the icon to use and display it
         if (wx.weather[0].main == "Clear" && dayOrNight == "DAY") {
             skycons.add("icon1", Skycons.CLEAR_DAY)
         } else if (wx.weather[0].main == "Clear" && dayOrNight == "NIGHT") {
@@ -65,18 +73,21 @@
         } else if (wx.weather[0].main == "Wind") {
             skycons.add("icon1", Skycons.WIND)
         }
+
+        // display only one temp scale
+        $("#temp-f").hide()
+        //animate
         skycons.play();
     }
 
+    // API call for weather
     function get_weather(pos) {
         let wxUrl = `https://fcc-weather-api.glitch.me/api/current?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`
-
         $.ajax({
-                url: wxUrl
-            })
-            .done(function(data) {
-                update_weather(data)
-            })
+            url: wxUrl
+        }).done(function(data) {
+            update_weather(data)
+        })
     }
 
 
