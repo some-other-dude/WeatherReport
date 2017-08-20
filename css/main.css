@@ -5,10 +5,19 @@
 }
 
 body {
+    font-family: 'Asap Condensed', sans-serif;
     height: 100%;
     background-color: black;
     color: RGBA(240, 240, 240, 1);
     padding-top: 30px;
+}
+
+#temp-c {
+    display:none;
+}
+
+#temp-f {
+    display: inline;
 }
 
 #wx-banner {

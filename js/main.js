@@ -24,18 +24,27 @@
         let skycons = new Skycons({
             "color": "white"
         })
-        let tempC = wx.main.temp - 273.15
-        let tempF = tempC * 9 / 5 + 32
-        let nowDate = new Date
+        let tempC = wx.main.temp
+        let tempF = Math.round(tempC * 9 / 5 + 32)
         let dayOrNight = ""
         let longDesc = wx.weather[0].description.split(" ").map(function(w) {
             return w.substring(0,1).toUpperCase() + w.slice(1)
         }).join(" ")
-        console.log(longDesc);
+        let sunrise = wx.sys.sunrise
+        let sunset = wx.sys.sunset
 
-        nowDate > wx.sys.sunrise && nowDate < wx.sys.sunset ? dayOrNight = "DAY" : dayOrNight = "NIGHT"
+        // finish doing the day/night calcs.
+        // put in f/c switch
 
-        document.querySelector("#wx-current-conditions").innerHTML = `<span id="wx-current-temp">${Math.round(wx.main.temp)}c</span></br><span class="wx-short-description">${longDesc}</span>`
+        wx.dt > sunrise && wx.dt < sunset ? dayOrNight = "DAY" : dayOrNight = "NIGHT"
+
+        console.log(dayOrNight);
+
+        document.querySelector("#wx-current-conditions").innerHTML = `<span id="wx-current-temp">
+                <span id="temp-c">${tempC}c</span>
+                <span id="temp-f">${tempF}f</span>
+            </span></br>
+            <span class="wx-short-description">${longDesc}</span>`
 
         if (wx.weather[0].main == "Clear" && dayOrNight == "DAY") {
             skycons.add("icon1", Skycons.CLEAR_DAY)
